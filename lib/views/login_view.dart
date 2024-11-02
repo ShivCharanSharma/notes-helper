@@ -1,30 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:notes_helper/views/login_view.dart';
-import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:notes_helper/firebase_options.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      useMaterial3: true,
-    ),
-    home: const LoginView(),
-  ));
-}
-
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
+class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -53,7 +39,7 @@ class _RegisterViewState extends State<RegisterView> {
           case ConnectionState.done:
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Register'),
+                title: const Text('Login'),
               ),
               body: Column(
                 children: [
@@ -77,23 +63,19 @@ class _RegisterViewState extends State<RegisterView> {
                     onPressed: () async {
                       final email = _email.text;
                       final password = _password.text;
-
                       try {
                         final data = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
+                            .signInWithEmailAndPassword(
                                 email: email, password: password);
                         print(data);
                       } on FirebaseAuthException catch (e) {
-                        if (e.code == "invalid-email") {
-                          print("Invalid Email");
-                        } else if (e.code == "weak-password") {
-                          print("Weak Password");
-                        } else if (e.code == "email-already-in-use") {
-                          print("Email already in use");
+                        print(e.code);
+                        if (e.code == "invalid-credential") {
+                          print("Invalid credential");
                         }
                       }
                     },
-                    child: const Text("Register"),
+                    child: const Text("Login"),
                   ),
                 ],
               ),
