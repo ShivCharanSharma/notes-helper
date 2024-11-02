@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'notes-helper-flutter.firebasestorage.app',
     iosBundleId: 'se.shiv.notesHelper',
   );
+
 }
