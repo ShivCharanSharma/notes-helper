@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:notes_helper/views/login_view.dart';
+import 'package:notes_helper/views/logout_view.dart';
+import 'package:notes_helper/views/register_view.dart';
 import 'package:notes_helper/views/verify_email_view.dart';
 import 'firebase_options.dart';
 
@@ -15,6 +17,12 @@ void main() {
       // useMaterial3: true,
     ),
     home: const HomePage(),
+    routes: {
+      "/login/": (context) => const LoginView(),
+      "/register/": (context) => const RegisterView(),
+      '/home/': (context) => const HomePage(),
+      "/verify-email/": (context) => const VerifyEmailView(),
+    },
   ));
 }
 
@@ -35,15 +43,17 @@ class HomePage extends StatelessWidget {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               final user = FirebaseAuth.instance.currentUser;
-              if (user?.emailVerified ?? false) {
-                print("Email Verified");
-                return const Text("Email Verified");
-              } else {
+              if (user == null) {
+                return LoginView();
+              } else if (!user.emailVerified) {
                 print("You need to verify your email");
-                return const LoginView();
+                return const VerifyEmailView();
+              } else if (user.emailVerified) {
+                print("Email Verified");
+                return const LogoutView();
               }
             default:
-              return const Text('Loading...');
+              return const CircularProgressIndicator();
           }
 
           return const Text("Done");
